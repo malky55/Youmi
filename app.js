@@ -217,11 +217,11 @@ function home(){const ts=dueToday(),d=ts.filter(doneToday).length,p=ts.length?Ma
  const BG=[['🌱 3 أيام',bb>=3],['🔥 7 أيام',bb>=7],['💪 14 يوم',bb>=14],['👑 30 يوم',bb>=30],['⏱️ 10 جلسات',fs>=10],['🎯 50 جلسة',fs>=50]];
  const avg=Math.round(wd.map(k=>pct(k)*100).reduce((x,y)=>x+y,0)/7);
  const carried=(S.carry[today()]||[]).length;
- const todo=ts.filter(t=>!doneToday(t));
- const cd=(()=>{if(!S.count.date)return '';const df=Math.ceil((new Date(S.count.date+'T00:00:00')-new Date(today()+'T00:00:00'))/864e5);return `<div class="cdown"><b>${df<0?'🎉':df}</b><span>${df<0?'وصلت!':'يوم على '+(S.count.label||'')}</span></div>`})();
- return `<div class="homew">${cd}${carried?`<div class="warn hw">📦 عندك ${carried} مهمة اتنقلت لوحدها من إمبارح.</div>`:''}
+ const todo=ts.filter(t=>!doneToday(t)).sort((x,y)=>(y.auto?1:0)-(x.auto?1:0));
+ const cd=(()=>{if(!S.count.date)return '';const df=Math.ceil((new Date(S.count.date+'T00:00:00')-new Date(today()+'T00:00:00'))/864e5);return `<div class="cdown"><b>${df<0?'🎉':df}</b><span>${df<0?'وصلت!':esc(S.count.txt!=null?S.count.txt:'يوم على '+(S.count.label||''))}</span></div>`})();
+ return `<div class="homew">${carried?`<div class="warn hw">📦 عندك ${carried} مهمة اتنقلت لوحدها من إمبارح.</div>`:''}
  ${kt?`<div class="key">⭐ مهمتك الأساسية: <b>${esc(kt.title)}</b> ${doneToday(kt)?'✅':''}</div>`:''}
- ${H.hero?'':`<div class="hero"><div class="ring" style="--p:${p}"><div>${p}%</div></div><div><h2>${msg}</h2><p>خلصت ${d} من ${ts.length} مهمة النهارده · ${quote()}</p></div></div>`}
+ <div class="toprow">${cd}${H.hero?'':`<div class="hero"><div class="ring" style="--p:${p}"><div>${p}%</div></div><div><h2>${msg}</h2><p>خلصت ${d} من ${ts.length} مهمة النهارده · ${quote()}</p></div></div>`}</div>
  ${H.cards?'':`<div class="cards"><div class="card"><div class="n">${d}</div><div class="l">مهام خلصتها ✅</div></div><div class="card"><div class="n">${plays}</div><div class="l">مرات اتسجلت</div></div><div class="card"><div class="n">${gt}</div><div class="l">مرات اللعب 🎮</div></div><div class="card"><div class="n">${bs}</div><div class="l">أيام متواصلة 🔥</div></div></div>`}
  ${H.tasks?'':`<div class="hc1"><h3>✅ لسه عليك النهارده</h3>${courseTaskRows()}${todo.length?todo.slice(0,6).map(taskRow).join('')+(todo.length>6?`<p class="hint">و ${todo.length-6} كمان في الأقسام</p>`:''):'<p>مفيش حاجة باقية 🎉</p>'}</div>`}
  ${H.week&&H.badges&&H.heat?'':`<div class="hc2">${H.week?'':`<h3>📅 الأسبوع: ${wdone} من ${S.weekTarget} أيام ${wdone>=S.weekTarget?'🏆':''}</h3><div class="wk">${wd.map((k,i)=>`<div class="wd ${ok(k)?'on':''} ${k===today()?'today':''}">${DN[(i+6)%7]}</div>`).join('')}<span>متوسط ${avg}% · أطول سلسلة ${bb}</span></div>`}
@@ -281,7 +281,7 @@ function settingsView(){const sel=(id,opts,cur)=>`<select id="${id}">${opts.map(
  <div class="scard"><h3>🎨 الشكل</h3><div class="set"><div class="seg">${[['light','☀️ فاتح'],['dark','🌙 غامق'],['auto','🖥️ تلقائي']].map(([v,l])=>`<button class="${S.theme===v?'on':''}" data-th="${v}">${l}</button>`).join('')}</div><div class="swatches">${ACCENTS.map(([c,n])=>`<button class="${S.accent===c?'on':''}" data-ac="${c}" title="${n}" style="background:${c}"></button>`).join('')}</div></div></div>
  <div class="scard"><h3>🏠 كروت الرئيسية</h3><div class="set hh">${HH.map(([k,l])=>sw('data-hh',k,!S.hh[k],l)).join('')}</div></div>
  <div class="scard"><h3>💻 مكانك في الكورس</h3><div class="set cposv"><span>الفيديو الجاي: <b dir="ltr">${nx?'#'+nx[0]+' '+esc(nx[1]):'خلصت كل الفيديوهات 🎉'}</b></span><span>التكليف الجاي: <b dir="ltr">${na<0?'خلصت كل التكليفات 🎉':(na+1)+'. '+esc(COURSE[na].n)}</b></span><button class="solid" data-cpos2>✏️ تعديل المكان</button></div></div>
- <div class="scard"><h3>⏳ العد التنازلي</h3><div class="set"><label>التاريخ المستهدف <input type="date" id="cntdate" value="${S.count.date}"></label><label>العنوان <input id="cntlabel" maxlength="30" value="${esc(S.count.label)}" placeholder="مثال: أول عميل"></label></div><p class="hint">بيظهر في أعلى الرئيسية جنب بطاقة التقدم.</p></div>
+ <div class="scard"><h3>⏳ العد التنازلي</h3><div class="set"><label>التاريخ المستهدف <input type="date" id="cntdate" value="${S.count.date}"></label><label>نص البانر كله <input id="cnttxt" maxlength="60" value="${esc(S.count.txt!=null?S.count.txt:'يوم على '+(S.count.label||''))}" placeholder="مثال: يوم على أول عميل"></label></div><p class="hint">بيظهر في أعلى الرئيسية جنب بطاقة التقدم.</p></div>
  <div class="scard"><h3>⏱️ صوت التركيز</h3><div class="set"><label>الصوت ${sel('fasound',Object.entries(SNDS).map(([k,v])=>[k,v[0]]),S.fa.sound)}</label><label>مستوى الصوت <input type="range" id="favol" min="0.1" max="1" step="0.1" value="${S.fa.vol}"></label><div class="tools"><button data-ftest>▶ جرّب الصوت</button></div></div></div>
  <div class="scard"><h3>📣 إشعارات المتصفح</h3><div class="set">${sw('data-nt','pray',S.nt.pray,'إشعار وقت الصلاة')}${sw('data-nt','focus',S.nt.focus,'إشعار نهاية جلسة التركيز')}</div><p class="hint">لازم تسمح بالإشعارات لما المتصفح يسأل.</p></div>
  <div class="scard wide"><h3>💾 البيانات</h3><div class="tools"><button data-export>⬇️ نسخة احتياطية</button><label class="filebtn">⬆️ استرجاع<input type="file" id="imp" accept=".json" hidden></label><button data-reset>🗑️ إعادة ضبط الكل</button></div>
@@ -478,7 +478,7 @@ document.addEventListener('change',e=>{const t=e.target;
  if(t.id==='fasound'){S.fa.sound=t.value;save();return}
  if(t.id==='favol'){S.fa.vol=+t.value;save();return}
  if(t.id==='cntdate'){S.count.date=t.value;save();return}
- if(t.id==='cntlabel'){S.count.label=t.value.trim()||'هدفي';save();return}
+ if(t.id==='cnttxt'){S.count.txt=t.value.trim();save();return}
  if(t.dataset.fsnd){S.fa.sound=t.dataset.fsnd&&t.value;save();return}
  if(t.dataset.fvol!==undefined){S.fa.vol=+t.value;save();return}
  if(t.id==='adhanf'){const f=t.files[0];if(!f)return;if(f.size>3.5*1024*1024){toast('الملف كبير. اختار ملف أقل من 3.5 ميجا');return}const r=new FileReader();r.onload=()=>{try{localStorage.setItem('yawmi-adhan',r.result);S.al.sound='custom';toast('✅ اتحفظ ملف الأذان');render()}catch(e){toast('المتصفح مش قادر يحفظ الملف ده، جرب ملف أصغر')}};r.readAsDataURL(f);return}
