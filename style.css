@@ -111,3 +111,144 @@ body[data-theme=dark] .chip.g{background:#173a30;color:#7ff0cf}body[data-theme=d
 .ring.big{background:conic-gradient(#6c5ce7 calc(var(--p)*1%),#e0dbff 0)}
 body[data-theme=dark] .ring.big{background:conic-gradient(#a29bfe calc(var(--p)*1%),#3a3570 0)}
 .cd{aspect-ratio:1.7}
+
+/* ===== v4.1 ===== */
+.sidebar{overflow-x:hidden;overflow-y:auto;scrollbar-width:none;padding:clamp(10px,2vh,22px) 14px;gap:clamp(6px,1.2vh,12px)}
+.sidebar::-webkit-scrollbar,#nav::-webkit-scrollbar,#view::-webkit-scrollbar{display:none;width:0;height:0}
+#nav{overflow-x:hidden;overflow-y:auto;scrollbar-width:none;gap:clamp(4px,.8vh,8px);min-height:0}
+.nav-btn{padding:clamp(7px,1.3vh,12px) 13px;font-size:clamp(14px,2vh,16px);flex:none}
+.nav-btn span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.logo{font-size:clamp(22px,3.4vh,28px)}
+.ghost{flex:none;padding:clamp(7px,1.2vh,11px)}
+html,body{height:100%;overflow:hidden}
+.app{height:100vh;min-height:0}
+main{height:100vh;display:flex;flex-direction:column;overflow:hidden;padding:clamp(10px,2vh,24px) clamp(14px,2.5vw,40px)}
+.top{margin-bottom:clamp(6px,1.4vh,18px);flex:none}
+h1{font-size:clamp(22px,3.6vh,30px)}
+#view{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:4px}
+h3{margin:clamp(8px,1.6vh,18px) 0 clamp(5px,1vh,10px);font-size:clamp(15px,2.2vh,18px)}
+/* trash */
+.del[data-del],.del[data-gsdel]{opacity:1;font-size:20px;filter:none;font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif}
+.del[data-del]:hover,.del[data-gsdel]:hover{transform:scale(1.2)}
+.trashb{font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji","Tajawal",sans-serif}
+.gbtns .trashb{background:#ffe3dc;color:#c0392b}
+.rm{opacity:.8;font-size:14px;color:#c0392b}
+/* home */
+.homew{display:grid;grid-template-columns:1.1fr 1fr 1fr;grid-template-rows:auto auto auto 1fr;gap:clamp(8px,1.6vh,16px) clamp(10px,1.4vw,20px);height:100%}
+.homew .hw,.homew .key{grid-column:1/-1;margin:0}
+.homew .hero{grid-column:1;margin:0;padding:clamp(12px,2.2vh,22px);gap:16px}
+.homew .hero h2{font-size:clamp(17px,2.6vh,22px)}
+.homew .ring{width:clamp(70px,11vh,110px);height:clamp(70px,11vh,110px)}.homew .ring div{width:78%;height:78%;font-size:clamp(16px,2.6vh,24px)}
+.homew .cards{grid-column:2/4;margin:0;grid-template-columns:repeat(4,1fr);gap:clamp(8px,1.2vw,14px)}
+.homew .card{padding:clamp(8px,1.6vh,16px)}.homew .card .n{font-size:clamp(22px,4vh,32px)}.homew .card .l{font-size:clamp(11px,1.7vh,14px)}
+.hc1,.hc2,.hc3{min-height:0;overflow:hidden}
+.homew .task{padding:clamp(6px,1.1vh,12px) 14px;margin-bottom:clamp(5px,.9vh,10px)}
+.homew .heat{padding:10px;gap:4px}.homew .bars{height:clamp(70px,12vh,110px);padding:10px}
+.homew #note{min-height:0;height:clamp(50px,9vh,90px);resize:none}
+.homew .moods .mood{font-size:clamp(20px,3.2vh,28px);padding:4px 10px}
+.homew .key .qt{opacity:.65;font-size:14px}.homew .key{padding:clamp(8px,1.3vh,14px) 16px}
+.homew .warn{padding:8px 14px;margin:0}
+.homew .badge{padding:6px 10px;font-size:13px}.homew .wk{padding:10px}
+.qt{display:inline}
+/* calendar */
+.calwrap{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;height:100%}
+.calleft{display:flex;flex-direction:column;min-height:0}
+.calleft .calgrid{flex:1;min-height:0;grid-auto-rows:minmax(0,1fr);grid-template-rows:auto}
+.calleft .calgrid{grid-template-rows:auto repeat(6,minmax(0,1fr))}
+.cd{aspect-ratio:auto!important;min-height:0}
+.calwrap .dayd{margin:0;overflow-y:auto;scrollbar-width:none;align-self:start;max-height:100%}
+.calhead h3{margin:0}
+.leg{margin:4px 0}
+/* focus */
+.focwrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:22px;height:100%}
+.focwrap .focus{padding:clamp(12px,2.4vh,30px)}
+.ring.big{width:clamp(150px,34vh,260px);height:clamp(150px,34vh,260px);margin:clamp(4px,1.2vh,14px) auto}
+.ring.big .ftime{width:calc(100% - 44px);height:calc(100% - 44px);font-size:clamp(36px,8vh,60px)}
+.focwrap .set{flex-direction:column;align-items:flex-start}
+/* prayers strip */
+.praystrip{background:#f4f1ff;border-radius:16px;padding:10px;flex:none}
+.pshead{display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;font-weight:700}.pshead b{color:#6c5ce7}
+.psrow{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.pb{border:2px solid #a29bfe;background:#fff;border-radius:12px;padding:4px 0;cursor:pointer;color:#6c5ce7;font-weight:700;font-size:13px;display:flex;flex-direction:column;align-items:center;min-height:42px;justify-content:center;line-height:1.1}
+.pb small{font-size:10px;font-weight:600;color:inherit}
+.pb.on{background:#00b894;border-color:#00b894;color:#fff}
+/* prayers view */
+.praywrap{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:22px}
+.pcount{color:#6c5ce7;font-size:16px;margin-inline-start:8px}
+.pgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.pcard{border:2px solid #a29bfe;background:#fff;border-radius:18px;padding:clamp(8px,1.8vh,18px) 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:clamp(14px,2.2vh,18px);color:inherit}
+.pc{width:clamp(26px,4vh,36px);height:clamp(26px,4vh,36px);border-radius:50%;border:3px solid #a29bfe;display:grid;place-items:center;color:#fff;font-size:18px}
+.pcard.on{background:#e9fff4;border-color:#00b894}.pcard.on .pc{background:#00b894;border-color:#00b894}
+.adk{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.acard{display:flex;gap:10px;background:#fff;border-radius:16px;padding:10px 12px;font-size:13px;align-items:flex-start}
+.acard.on{background:#e9fff4}.acard b{font-size:15px}.acard ul{margin:4px 0 0;padding-inline-start:18px;line-height:1.5;opacity:.85}
+.achk{flex:none;width:26px;height:26px;border-radius:50%;border:3px solid #a29bfe;background:#fff;color:#fff;cursor:pointer;padding:0}
+.acard.on .achk{background:#00b894;border-color:#00b894}
+.duas{display:flex;flex-direction:column;gap:8px}.dua{background:#fff;border-radius:14px;padding:10px 14px;font-size:14px;line-height:1.6;border-right:4px solid #fd79a8}
+/* goals drag */
+.grip{cursor:grab;touch-action:none;user-select:none;opacity:.5;font-size:20px;padding:0 4px;line-height:1}.grip:hover{opacity:1}
+.gstep{position:relative;transition:background .1s}.gstep.drag{z-index:5;background:#f4f1ff;box-shadow:0 6px 18px #6c5ce744;border-radius:12px;transition:none;opacity:.95}
+.gstep.ob::before,.gstep.oa::after{content:"";position:absolute;inset-inline:0;height:3px;background:#6c5ce7;border-radius:3px}.gstep.ob::before{top:-2px}.gstep.oa::after{bottom:-2px}
+/* course */
+.cwrap{display:flex;flex-direction:column;gap:clamp(6px,1.3vh,12px);height:100%}
+.cards.c4{grid-template-columns:repeat(4,1fr);margin:0;gap:12px}.cwrap .card{padding:clamp(8px,1.4vh,14px)}.cwrap .card .n{font-size:clamp(20px,3.6vh,30px)}
+.cnext{display:flex;gap:14px;align-items:center;flex-wrap:wrap;background:linear-gradient(120deg,#fff,#f4f1ff);border:2px solid #a29bfe;border-radius:18px;padding:10px 16px}
+.cnext>div{flex:1;min-width:200px;display:flex;flex-direction:column}.cnext small{opacity:.6}.cnext b{font-size:15px;direction:ltr;text-align:right}
+.cnext button,.csechead button{border:0;background:#6c5ce7;color:#fff;border-radius:12px;padding:9px 14px;cursor:pointer;font-size:14px}
+.csecs{display:flex;gap:6px;flex-wrap:wrap}
+.csec{border:2px solid #e0dbff;background:#fff;color:inherit;border-radius:12px;padding:5px 10px;cursor:pointer;font-size:13px;font-weight:700}.csec.dn{background:#e9fff4;border-color:#00b894}.csec.on{background:#6c5ce7;border-color:#6c5ce7;color:#fff}
+.csechead{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.csechead b{direction:ltr}.csechead span{opacity:.65;font-size:13px;flex:1}.csechead button{background:#f4f1ff;color:#6c5ce7}.csechead button.on{background:#00b894;color:#fff}
+.clist{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:6px;min-height:0;align-content:start}
+.cl{display:flex;align-items:center;gap:8px;border:0;background:#fff;border-radius:12px;padding:7px 10px;cursor:pointer;color:inherit;font-size:13px;text-align:right;direction:ltr}
+.cl span{width:20px;height:20px;border-radius:50%;border:2px solid #a29bfe;display:grid;place-items:center;font-size:12px;flex:none;color:#fff}
+.cl b{opacity:.55;font-variant-numeric:tabular-nums}.cl em{font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cl.on{background:#e9fff4}.cl.on span{background:#00b894;border-color:#00b894}.cl.on em{opacity:.6}
+/* dark */
+body[data-theme=dark] :is(.praystrip,.pcard,.acard,.dua,.pb,.achk,.cnext,.csec,.cl){background:#211e44;color:#ece9ff}
+body[data-theme=dark] :is(.pcard.on,.acard.on,.cl.on,.csec.dn){background:#173a30}body[data-theme=dark] .pb.on{background:#00b894}body[data-theme=dark] .csec.on{background:#6c5ce7}
+body[data-theme=dark] .csechead button{background:#2b2757;color:#ece9ff}body[data-theme=dark] .csechead button.on{background:#00b894}
+body[data-theme=dark] .gstep.drag{background:#2b2757}body[data-theme=dark] .gbtns .trashb{background:#4a2f2a;color:#ffb199}
+/* small screens: allow normal flow */
+@media(max-width:900px){
+ html,body{overflow:auto;height:auto}.app{height:auto;flex-direction:column}main{height:auto;overflow:visible}#view{overflow:visible}
+ .sidebar{height:auto;position:static;width:100%}#nav{flex-direction:row;flex-wrap:wrap}
+ .homew,.calwrap,.focwrap,.praywrap{display:block;height:auto}.homew>*{margin-bottom:12px}.homew .cards{grid-template-columns:repeat(2,1fr)}
+ .calleft .calgrid{grid-template-rows:none;grid-auto-rows:52px}.adk{grid-template-columns:1fr}.cards.c4{grid-template-columns:repeat(2,1fr)}
+}
+.nav-btn{padding:clamp(5px,1vh,10px) 12px;font-size:clamp(13px,1.9vh,15px)}
+#nav{gap:clamp(3px,.6vh,6px)}.sep{margin:2px 0}
+.homew .task .t{font-size:15px}
+
+/* ===== v4.1 spacing fix: roomy layout, natural page scroll where needed ===== */
+@media(min-width:901px){
+ html,body{height:auto;overflow:auto;overflow-x:hidden}
+ .app{height:auto;min-height:100vh}
+ .sidebar{position:sticky;top:0;height:100vh;padding:22px 16px;gap:14px}
+ #nav{gap:8px}.nav-btn{padding:12px 14px;font-size:16px}.logo{font-size:28px}.ghost{padding:11px}
+ main{height:auto;overflow:visible;padding:30px clamp(20px,3vw,48px)}
+ .top{margin-bottom:24px}h1{font-size:30px}
+ #view{overflow:visible;padding-bottom:30px}
+ h3{margin:22px 0 12px;font-size:18px}
+ .homew{grid-template-columns:1fr 1fr;grid-template-rows:none;height:auto;gap:22px}
+ .homew .hero{grid-column:1/-1;padding:24px;gap:22px}
+ .homew .hero h2{font-size:22px}
+ .homew .ring{width:110px;height:110px}.homew .ring div{font-size:26px}
+ .homew .cards{grid-column:1/-1;grid-template-columns:repeat(4,1fr);gap:16px}
+ .homew .card{padding:18px}.homew .card .n{font-size:34px}.homew .card .l{font-size:14px}
+ .hc1,.hc2,.hc3{overflow:visible}
+ .homew .task{padding:12px 16px;margin-bottom:10px}.homew .task .t{font-size:17px}
+ .homew .heat{padding:14px;gap:5px}.homew .bars{height:110px;padding:14px}
+ .homew .moods .mood{font-size:28px;padding:6px 12px}
+ .homew .key{padding:16px 18px}.homew .warn{padding:12px 16px}
+ .homew .badge{padding:10px 14px;font-size:14px}.homew .wk{padding:14px}
+ .calwrap{height:auto;gap:26px}
+ .calleft .calgrid{grid-template-rows:32px;grid-auto-rows:64px;gap:8px}
+ .calwrap .dayd{overflow:visible;max-height:none;padding:8px 20px 20px}
+ .focwrap{height:auto;gap:26px}.focwrap .focus{padding:30px}
+ .ring.big{width:260px;height:260px;margin:16px auto}.ring.big .ftime{font-size:56px}
+ .praywrap{gap:26px}.pgrid{gap:14px}.pcard{padding:20px 6px;font-size:18px;gap:10px}.pc{width:36px;height:36px}
+ .adk{gap:14px}.acard{padding:14px 16px;font-size:14px}.duas{gap:12px}.dua{padding:14px 18px;font-size:15px}
+ .cwrap{height:auto;gap:16px}.cwrap .card .n{font-size:30px}.cards.c4{gap:16px}
+ .cnext{padding:16px 20px}.csecs{gap:8px}.csec{padding:7px 12px;font-size:14px}
+ .clist{gap:8px}.cl{padding:10px 12px;font-size:14px}.csechead{gap:14px}
+}
