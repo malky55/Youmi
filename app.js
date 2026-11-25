@@ -1,4 +1,4 @@
-/* يومي v4.4 */
+/* يومي v4.5 */
 const KEY='yawmi-v1';
 const dk=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const nowD=()=>new Date(Date.now()-((typeof S!=='undefined'&&S&&S.dayStart)||0)*36e5);
@@ -26,29 +26,31 @@ S.fs=Object.assign({work:25,brk:5,long:15,every:4,auto:false,sound:true},S.fs||{
 S.en=S.en||{w:{},ph:{}};S.ch=S.ch||{done:{},ans:{},idx:0};S.count=S.count||{date:'2027-03-01',label:'هدفي'};S.fa=Object.assign({sound:'beep',vol:.8},S.fa||{});
 const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
 const day=(d=today())=>S.log[d]||(S.log[d]={});
-const allTasks=()=>S.sections.flatMap(s=>s.tasks);
+const CH3={id:'ch3',title:'⚡ أحل 3 تحديات',target:3,played:true,auto:true};
+const allTasks=()=>[...S.sections.flatMap(s=>s.tasks),CH3];
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const DN=['ح','ن','ث','ر','خ','ج','س'],DFULL=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'],DORDER=[6,0,1,2,3,4,5];
 function due(t,k){const g=new Date(k+'T00:00:00').getDay();return !t.days||!t.days.length||t.days.includes(g)||(S.carry[k]||[]).includes(t.id)}
 const tasksFor=k=>allTasks().filter(t=>due(t,k));
 const dueToday=()=>tasksFor(today());
 const doneToday=t=>{const v=day()[t.id]||0;return t.target?v>=t.target:v>0};
+const doneOn=(t,k)=>{const v=((S.log[k]||{})[t.id])||0;return t.target?v>=t.target:v>0};
 function total(id){return Object.values(S.log).reduce((a,d)=>a+(d[id]||0),0)}
-function pct(k){const l=S.log[k]||{};const ts=tasksFor(k);if(!ts.length)return 0;return ts.filter(t=>l[t.id]>0).length/ts.length}
+function pct(k){const l=S.log[k]||{};const ts=tasksFor(k);if(!ts.length)return 0;return ts.filter(t=>doneOn(t,k)).length/ts.length}
 const ok=k=>{const p=pct(k);return S.minPct?p*100>=S.minPct:p>0};
 function streak(){let n=0,d=nowD();if(!ok(today()))d.setDate(d.getDate()-1);
  for(;;){if(ok(dk(d))){n++;d.setDate(d.getDate()-1)}else break}return n}
 function best(){const ks=Object.keys(S.log).sort();let b=0,c=0,prev=null;for(const k of ks){if(!ok(k)){c=0;prev=null;continue}const d=new Date(k+'T00:00:00');if(prev&&Math.round((d-prev)/864e5)===1)c++;else c=1;prev=d;b=Math.max(b,c)}return Math.max(b,streak())}
-function tstreak(id){let n=0,d=nowD();if(!((S.log[dk(d)]||{})[id]>0))d.setDate(d.getDate()-1);while((S.log[dk(d)]||{})[id]>0){n++;d.setDate(d.getDate()-1)}return n}
+function tstreak(id){const t=allTasks().find(x=>x.id===id)||{id};let n=0,d=nowD();if(!doneOn(t,dk(d)))d.setDate(d.getDate()-1);while(doneOn(t,dk(d))){n++;d.setDate(d.getDate()-1)}return n}
 function weekDays(){const r=[],x=nowD();const off=(x.getDay()+1)%7;x.setDate(x.getDate()-off);for(let i=0;i<7;i++){r.push(dk(x));x.setDate(x.getDate()+1)}return r}
 const daysLabel=t=>t.days&&t.days.length?'🔁 '+DORDER.filter(g=>t.days.includes(g)).map(g=>DN[g]).join(' '):'';
 /* v4.2: مصدر كل مهمة (القسم اللي جاية منه) */
-function srcOf(id){const s=S.sections.find(s=>s.tasks.some(t=>t.id===id));return s?{icon:s.icon,name:s.name}:{icon:'📌',name:''}}
+function srcOf(id){if(id==='ch3')return{icon:'⚡',name:'تحديات'};const s=S.sections.find(s=>s.tasks.some(t=>t.id===id));return s?{icon:s.icon,name:s.name}:{icon:'📌',name:''}}
 /* v4.2: ترحيل تلقائي - أي مهمة ما اتعملتش بتتنقل لوحدها لليوم اللي بعده */
 function autoRollover(){const t=today();if(S.rollTo===t)return;
  Object.keys(S.log).filter(k=>k<t).sort().forEach(k=>{
   const nx=dk(new Date(new Date(k+'T00:00:00').getTime()+864e5));if(nx>t)return;
-  const un=tasksFor(k).filter(x=>!((S.log[k]||{})[x.id]>0)).map(x=>x.id);
+  const un=tasksFor(k).filter(x=>!doneOn(x,k)).map(x=>x.id);
   if(un.length)S.carry[nx]=[...new Set([...(S.carry[nx]||[]),...un])]});
  S.rollTo=t;save()}
 autoRollover();
@@ -56,9 +58,9 @@ while(S.ch.done[S.ch.idx%CHALLENGES.length]&&Object.keys(S.ch.done).length<CHALL
 function taskRow(t){const c=day()[t.id]||0;const done=doneToday(t);const off=!due(t,today());
  const g=nowD().getDay();const norm=!t.days||!t.days.length||t.days.includes(g);
  const carried=(S.carry[today()]||[]).includes(t.id)&&!norm;const so=srcOf(t.id);
- return `<div class="task ${done?'done':''} ${off?'off':''}"><button class="chk" data-tick="${t.id}">${done?'✓':''}</button><span class="src" title="${esc(so.name)}">${so.icon}</span><span class="t">${S.key[today()]===t.id?'⭐ ':''}${esc(t.title)}${t.days&&t.days.length?` <small class="rep">${daysLabel(t)}</small>`:''}${carried?' <small class="rep">📦 من إمبارح</small>':''}</span>${tstreak(t.id)>=2?`<span class="sk">🔥 ${tstreak(t.id)}</span>`:''}<button class="del" data-key="${t.id}" title="مهمة اليوم الأساسية">⭐</button>
- ${t.played?`<span class="cnt"><button data-m="${t.id}">−</button><b>${t.target?Math.min(c,t.target)+'/'+t.target:c}</b><button data-p="${t.id}">+</button></span>`:''}
- <button class="del" data-edit="${t.id}" title="تعديل">✏️</button><button class="del" data-del="${t.id}" title="حذف">🗑️</button></div>`}
+ return `<div class="task ${done?'done':''} ${off?'off':''}"><button class="chk" data-tick="${t.id}">${done?'✓':''}</button><span class="src" title="${esc(so.name)}">${so.icon}</span><span class="t">${S.key[today()]===t.id?'⭐ ':''}${esc(t.title)}${t.days&&t.days.length?` <small class="rep">${daysLabel(t)}</small>`:''}${carried?' <small class="rep">📦 من إمبارح</small>':''}</span>${tstreak(t.id)>=2?`<span class="sk">🔥 ${tstreak(t.id)}</span>`:''}${t.auto?'':`<button class="del" data-key="${t.id}" title="مهمة اليوم الأساسية">⭐</button>`}
+ ${t.auto?`<span class="cnt auto"><b>${Math.min(c,t.target)}/${t.target}</b></span>`:t.played?`<span class="cnt"><button data-m="${t.id}">−</button><b>${t.target?Math.min(c,t.target)+'/'+t.target:c}</b><button data-p="${t.id}">+</button></span>`:''}
+ ${t.auto?'':`<button class="del" data-edit="${t.id}" title="تعديل">✏️</button><button class="del" data-del="${t.id}" title="حذف">🗑️</button>`}</div>`}
 const QUOTES=['الاستمرارية أهم من الكمال 💎','خطوة صغيرة كل يوم بتعمل فرق كبير 🌱','النهارده أحسن من إمبارح بحاجة بسيطة ✨','ابدأ بأسهل مهمة وهتشد الباقي 🚀','ريّح دماغك شوية وارجع أقوى 🧘'];
 const quote=()=>QUOTES[nowD().getDate()%QUOTES.length];
 function heat(){let h='';for(let i=27;i>=0;i--){const x=nowD();x.setDate(x.getDate()-i);const p=pct(dk(x));h+=`<i class="hc l${p===0?0:p<.34?1:p<.67?2:3}" title="${dk(x)} · ${Math.round(p*100)}%"></i>`}return `<div class="heat">${h}</div>`}
@@ -303,7 +305,7 @@ function courseView(){const all=cLessons(),w=all.filter(x=>cWatched(x[0])).lengt
  else if(CS.tab==='ch')main=chView();
  else main=enView();
  return `<div class="cwrap c43">${tabs}
- <div class="cbody2"><div class="cside">${COURSE.map((s,i)=>{const dn2=s.l.every(x=>cWatched(x[0]));const swc=s.l.filter(x=>cWatched(x[0])).length;return `<button class="csec2 ${i===CS.sec?'on':''} ${dn2?'dn':''}" data-csec="${i}"><span class="csn">${i+1}</span><span class="cst" dir="ltr">${esc(s.n)}</span><small>${swc}/${s.l.length}${S.course.a[i]?' ·📝✓':''}</small></button>`}).join('')}</div>
+ <div class="cbody2 ${CS.tab==='v'||CS.tab==='a'?'':'noside'}">${CS.tab==='v'||CS.tab==='a'?`<div class="cside">${COURSE.map((s,i)=>{const dn2=s.l.every(x=>cWatched(x[0]));const swc=s.l.filter(x=>cWatched(x[0])).length;return `<button class="csec2 ${i===CS.sec?'on':''} ${dn2?'dn':''}" data-csec="${i}"><span class="csn">${i+1}</span><span class="cst" dir="ltr">${esc(s.n)}</span><small>${swc}/${s.l.length}${S.course.a[i]?' ·📝✓':''}</small></button>`}).join('')}</div>`:''}
  ${main}</div></div>`}
 function sectionOf(id){if(!id)return 'بدون ربط بمهمة';const s=S.sections.find(s=>s.tasks.some(t=>t.id===id));return s?s.icon+' '+s.name:'مهام محذوفة'}
 function statsView(){const R=S.statRange,ks=[];for(let i=R-1;i>=0;i--){const x=nowD();x.setDate(x.getDate()-i);ks.push(dk(x))}
@@ -320,7 +322,7 @@ function calendarView(){const first=new Date(CM.y,CM.m,1),n=new Date(CM.y,CM.m+1
  let cells='';for(let i=0;i<off;i++)cells+='<div class="cd blank"></div>';
  for(let d=1;d<=n;d++){const k=dk(new Date(CM.y,CM.m,d)),fut=k>t,p=pct(k),lv=fut||!(S.log[k]&&Object.values(S.log[k]).some(v=>v>0))?0:p<.34?1:p<.67?2:3;
   cells+=`<button class="cd l${lv} ${k===t?'today':''} ${k===CM.sel?'sel':''}" data-csel="${k}"><span>${d}</span>${S.mood[k]?`<small>${S.mood[k]}</small>`:''}</button>`}
- const k=CM.sel,l=S.log[k]||{},ts=allTasks(),dn=ts.filter(x=>l[x.id]>0),ms=tasksFor(k).filter(x=>!(l[x.id]>0)),fm=(S.fl[k]||[]).reduce((a,x)=>a+x.m,0);
+ const k=CM.sel,l=S.log[k]||{},ts=allTasks(),dn=ts.filter(x=>doneOn(x,k)),ms=tasksFor(k).filter(x=>!doneOn(x,k)),fm=(S.fl[k]||[]).reduce((a,x)=>a+x.m,0);
  const title=new Date(CM.y,CM.m,1).toLocaleDateString('ar-EG',{month:'long',year:'numeric'});
  return `<div class="calwrap"><div class="calleft"><div class="calhead"><button data-cal="-1">›</button><h3>📆 ${title}</h3><button data-cal="1">‹</button><button data-cal="0" class="tb">النهارده</button></div>
  <div class="calgrid">${['س','ح','ن','ث','ر','خ','ج'].map(x=>`<div class="ch">${x}</div>`).join('')}${cells}</div>
@@ -340,30 +342,36 @@ function reviewView(){const ts=dueToday(),dn=ts.filter(doneToday),un=ts.filter(t
  <div><h3>⏳ اللي اتأجل</h3>${un.map(t=>rvRow(t,false)).join('')||'<p>خلصت كل حاجة، برافو 🎉</p>'}
  <p class="hint">📦 اللي ما اتعملش بيتنقل لوحده لبكرة، وممكن تعدل أو تحذف أي مهمة من هنا.</p></div></div>`}
 /* ---------- v4.4: تحديات ---------- */
+function chTrack(i,on){S.ch.sl=S.ch.sl||{};const k=today(),a=S.ch.sl[k]=S.ch.sl[k]||[];const p=a.indexOf(i);if(on&&p<0)a.push(i);if(!on&&p>=0)a.splice(p,1);day().ch3=a.length;
+ if(on&&a.length===3){setTimeout(()=>{confetti();toast('🎯 خلصت هدف التحديات النهارده!')},50)}}
+const CHPP=10;
+function pager(tot,cur,att){const n=Math.ceil(tot/CHPP);if(n<=1)return '';let b='';for(let i=0;i<n;i++)b+=`<button class="pgb ${i===cur?'on':''}" ${att}="${i}">${i+1}</button>`;return `<div class="pager"><button class="pgb" ${att}="${Math.max(0,cur-1)}" ${cur===0?'disabled':''}>›</button>${b}<button class="pgb" ${att}="${Math.min(n-1,cur+1)}" ${cur>=n-1?'disabled':''}>‹</button><span class="pgi">${cur*CHPP+1}-${Math.min(tot,cur*CHPP+CHPP)} من ${tot}</span></div>`}
 const chDaily=()=>CHALLENGES[S.ch.idx%CHALLENGES.length];
-function chCard(c,i,daily){const dn=!!S.ch.done[i],op=S.ch.open===i;
- return `<div class="chq ${dn?'on':''}">
- <div class="chh"><b class="chn">${i+1}</b><span class="cht">${esc(c.t)}</span><span class="chb ${c.d===1?'b1':c.d===2?'b2':'b3'}">${['','متوسط','فوق متوسط','صعب'][c.d]}</span><span class="chb b0">${CH_TOPICS[c.s]}</span>${daily?'<span class="chb bd">🌟 النهارده</span>':''}</div>
- <div class="chctl"><button data-chh="${i}">💡 تلميح</button><button data-chs="${i}">${S.ch.show===i?'إخفاء الحل':'عرض الحل'}</button>${dn?'<button data-chx="'+i+'">↩️ فتح تاني</button>':`<button data-chok="${i}">حليته ✓</button>`}</div>
- ${S.ch.hint===i?`<div class="chhint">💡 ${esc(c.h)}</div>`:''}
+function chCard(c,i,daily){const dn=!!S.ch.done[i];
+ return `<div class="chq ${dn?'on':''} ${daily?'dly':''}">
+ <div class="chtop"><b class="chn">${i+1}</b><div class="chtags"><span class="chb ${c.d===1?'b1':c.d===2?'b2':'b3'}">${['','متوسط','فوق متوسط','صعب'][c.d]}</span><span class="chb b0">${CH_TOPICS[c.s]}</span>${daily?'<span class="chb bd">🌟 النهارده</span>':''}${dn?'<span class="chb bg">✅ اتحل</span>':''}</div></div>
+ <p class="cht">${esc(c.t)}</p>
  ${!dn?`<div class="chans"><input data-chin="${i}" placeholder="اكتب إجابتك أو ملاحظتك هنا..." value="${esc(S.ch.ans[i]||'')}"></div>`:''}
+ ${S.ch.hint===i?`<div class="chhint">💡 ${esc(c.h)}</div>`:''}
  ${S.ch.show===i?`<div class="chsol"><b>الحل:</b><pre dir="ltr">${esc(c.a)}</pre><p>💬 ${esc(c.x)}</p></div>`:''}
- ${dn?'<div class="chdone">✅ اتحل</div>':''}</div>`}
+ <div class="chctl"><button data-chh="${i}">💡 تلميح</button><button data-chs="${i}">${S.ch.show===i?'إخفاء الحل':'عرض الحل'}</button>${dn?'<button data-chx="'+i+'">↩️ فتح تاني</button>':`<button class="ok" data-chok="${i}">حليته ✓</button>`}</div></div>`}
 function chView(){const dn=Object.keys(S.ch.done).length,pc=Math.round(dn/CHALLENGES.length*100);
- const f=S.ch.f||'all',dayIdx=S.ch.idx%CHALLENGES.length;
+ const sol=((S.ch.sl||{})[today()]||[]).length;const f=S.ch.f||'all',dayIdx=S.ch.idx%CHALLENGES.length;
  const opts=['all','new','done',1,2,3].map(v=>`<button class="chipb ${String(f)===String(v)?'on':''}" data-chf="${v}">${v==='all'?'الكل':v==='new'?'اللي لسه':v==='done'?'المتحلولة':['','متوسط','فوق متوسط','صعب'][v]}</button>`).join('');
  let idxs=CHALLENGES.map((c,i)=>i).filter(i=>f==='all'?i!==dayIdx:f==='new'?!S.ch.done[i]&&i!==dayIdx:f==='done'&&S.ch.done[i]||(CHALLENGES[i].d===+f&&i!==dayIdx));
  if(S.ch.f&&S.ch.f!=='all'&&S.ch.f!=='new'&&S.ch.f!=='done')idxs=CHALLENGES.map((c,i)=>i).filter(i=>CHALLENGES[i].d===+f&&i!==dayIdx);
+ const pg=Math.min(S.ch.pg||0,Math.max(0,Math.ceil(idxs.length/CHPP)-1));
  return `<div class="cmain chwrap">
- <div class="chday"><div><h4>🌟 تحدي النهارده</h4><p>كل يوم تحدي جديد بالترتيب، وحلك بيتحفظ عندك.</p></div><div class="chprog"><b>${dn}/${CHALLENGES.length}</b><div class="pbar"><i style="width:${pc}%"></i></div></div></div>
+ <div class="chday"><div><h4>🌟 تحدي النهارده</h4><p>كل يوم تحدي جديد بالترتيب. هدف النهارده: ${Math.min(sol,3)}/3 تحديات.</p></div><div class="chprog"><b>${dn}/${CHALLENGES.length}</b><div class="pbar"><i style="width:${pc}%"></i></div></div></div>
  ${chCard(CHALLENGES[dayIdx],dayIdx,true)}
  <h4>📚 كل التحديات</h4><div class="chfl">${opts}</div>
- <div class="chlist">${idxs.map(i=>chCard(CHALLENGES[i],i,false)).join('')||'<p class="hint">مفيش تحديات هنا.</p>'}</div></div>`}
+ <div class="chlist">${idxs.slice(pg*CHPP,pg*CHPP+CHPP).map(i=>chCard(CHALLENGES[i],i,false)).join('')||'<p class="hint">مفيش تحديات هنا.</p>'}</div>${pager(idxs.length,pg,'data-chpg')}</div>`}
 /* ---------- v4.4: إنجليزي ---------- */
 const enDailyW=()=>{const d=Math.floor((new Date(today()+'T00:00:00')-new Date('2026-11-25T00:00:00'))/864e5);return [EN_WORDS[((d%EN_WORDS.length)+EN_WORDS.length)%EN_WORDS.length],EN_PHRASES[((d%EN_PHRASES.length)+EN_PHRASES.length)%EN_PHRASES.length]]};
 function enWordRow(w,i){const kn=!!S.en.w[i];return `<div class="enw ${kn?'on':''}" data-enflip="w${i}"><div class="enf ${S.en.flip==='w'+i?'fl':''}"><span class="enword" dir="ltr">${esc(w[0])}</span><span class="enmean">${kn?esc(w[1]):''}</span></div><div class="enex" dir="ltr">${esc(w[2])}</div><div class="enbtns"><button data-enkn="${i}">${kn?'✓ عارفها':'علّمها معروفة'}</button></div></div>`}
 function enView(){const [dw,dp]=enDailyW(),dwi=EN_WORDS.indexOf(dw),dpi=EN_PHRASES.indexOf(dp);
  const kw=Object.keys(S.en.w).length,kp=Object.keys(S.en.ph).length;
+ const ppg=Math.min(S.en.pp||0,Math.max(0,Math.ceil(EN_PHRASES.length/CHPP)-1)),wpg=Math.min(S.en.wp||0,Math.max(0,Math.ceil(EN_WORDS.length/CHPP)-1));
  const tip=EN_TIPS[nowD().getDate()%EN_TIPS.length];
  return `<div class="cmain enwrap">
  <div class="enday">
@@ -374,9 +382,9 @@ function enView(){const [dw,dp]=enDailyW(),dwi=EN_WORDS.indexOf(dw),dpi=EN_PHRAS
  <h4>🃏 كروت المراجعة (${kw} كلمة معروفة)</h4>
  <div class="enrev">${kw?Object.keys(S.en.w).map(i=>{const w=EN_WORDS[i];return `<div class="enc ${S.en.flip==='r'+i?'fl':''}" data-enflip="r${i}"><span class="ena">${S.en.flip==='r'+i?esc(w[1]):esc(w[0])}</span><small>${S.en.flip==='r'+i?'':'دوس للمعنى'}</small></div>`}).join(''):'<p class="hint">علّم كلمات معروفة من بنك الكلمات عشان تتراجع هنا.</p>'}</div>
  <h4>💼 جمل للعملاء (${kp}/${EN_PHRASES.length})</h4>
- <div class="enphs">${EN_PHRASES.map((p,i)=>`<div class="enp ${S.en.ph[i]?'on':''}"><span dir="ltr">${esc(p[0])}</span><small>${esc(p[1])}</small><button data-enpk="${i}">${S.en.ph[i]?'✓':'اتقنتها'}</button></div>`).join('')}</div>
+ <div class="enphs">${EN_PHRASES.map((p,i)=>[p,i]).slice(ppg*CHPP,ppg*CHPP+CHPP).map(([p,i])=>`<div class="enp ${S.en.ph[i]?'on':''}"><span dir="ltr">${esc(p[0])}</span><small>${esc(p[1])}</small><button data-enpk="${i}">${S.en.ph[i]?'✓':'اتقنتها'}</button></div>`).join('')}</div>${pager(EN_PHRASES.length,ppg,'data-enpp')}
  <h4>📚 بنك الكلمات (${kw}/${EN_WORDS.length})</h4>
- <div class="enws">${EN_WORDS.map((w,i)=>enWordRow(w,i)).join('')}</div></div>`}
+ <div class="enws">${EN_WORDS.map((w,i)=>[w,i]).slice(wpg*CHPP,wpg*CHPP+CHPP).map(([w,i])=>enWordRow(w,i)).join('')}</div>${pager(EN_WORDS.length,wpg,'data-enwp')}</div>`}
 function render(){nav();document.getElementById('date').textContent=nowD().toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
  document.getElementById('streak').textContent=streak();
  applyLook();document.body.dataset.view=S.view;const tb=document.getElementById('theme');if(tb)tb.textContent=effTheme()==='dark'?'☀️':'🌙';const h=new Date().getHours();document.getElementById('greet').textContent=(h<12?'صباح الخير':h<18?'نهارك سعيد':'مساء الخير')+' يا '+S.name+' 👋';
@@ -405,11 +413,14 @@ document.addEventListener('click',async e=>{const b=e.target.closest('button');i
  else if(q('cas')){const i=+q('cas'),lg=(S.course.log[today()]=S.course.log[today()]||{v:[],a:[]});if(S.course.a[i]){delete S.course.a[i];lg.a=lg.a.filter(x=>x!==i)}else{S.course.a[i]=1;if(!lg.a.includes(i))lg.a.push(i);toast('📝 تكليف '+COURSE[i].n+' اتحل')}}
  else if(q('csec')){CS.sec=+q('csec')}
  else if(q('ctab')){CS.tab=q('ctab');S.course.tab=CS.tab}
- else if(q('chf')){S.ch.f=q('chf')==='all'?undefined:q('chf')}
+ else if(q('chf')){S.ch.f=q('chf')==='all'?undefined:q('chf');S.ch.pg=0}
+ else if(q('chpg')){S.ch.pg=+q('chpg')}
+ else if(q('enpp')){S.en.pp=+q('enpp')}
+ else if(q('enwp')){S.en.wp=+q('enwp')}
  else if(q('chh')){S.ch.hint=S.ch.hint===+q('chh')?undefined:+q('chh')}
  else if(q('chs')){S.ch.show=S.ch.show===+q('chs')?undefined:+q('chs')}
- else if(q('chok')){const i=+q('chok');S.ch.done[i]=1;if(i===S.ch.idx%CHALLENGES.length)S.ch.idx++;confetti();toast('⚡ تحدي جديد اتحل!')}
- else if(q('chx')){delete S.ch.done[+q('chx')]}
+ else if(q('chok')){const i=+q('chok');S.ch.done[i]=1;chTrack(i,1);if(i===S.ch.idx%CHALLENGES.length)S.ch.idx++;confetti();toast('⚡ تحدي جديد اتحل!')}
+ else if(q('chx')){delete S.ch.done[+q('chx')];chTrack(+q('chx'),0)}
  else if(q('enkn')){const i=+q('enkn');S.en.w[i]?delete S.en.w[i]:S.en.w[i]=1}
  else if(q('enpk')){const i=+q('enpk');S.en.ph[i]?delete S.en.ph[i]:S.en.ph[i]=1}
  else if(q('enflip')){S.en.flip=S.en.flip===q('enflip')?undefined:q('enflip')}
@@ -428,8 +439,8 @@ document.addEventListener('click',async e=>{const b=e.target.closest('button');i
  else if(q('edit')){const t=allTasks().find(x=>x.id===q('edit'));if(!t)return;const fl=[{id:'title',label:'اسم المهمة',value:t.title},{id:'days',type:'days',label:'تتكرر في أيام',value:t.days||[]}];if(t.played)fl.push({id:'target',label:'الهدف اليومي (فاضي = عداد مفتوح)',value:t.target||'',ph:'مثلا 5'});const r=await ask({title:'تعديل المهمة',fields:fl,ok:'حفظ'});if(!r||!r.title.trim())return;t.title=r.title.trim();t.days=r.days.length&&r.days.length<7?r.days:undefined;if(t.played){const v=parseInt(r.target);t.target=v>0?v:undefined}}
  else if(q('v')){S.view=q('v')}
  else if(q('tick')){const l=day(),tk=allTasks().find(x=>x.id===q('tick'));if(tk&&tk.target){l[q('tick')]=(l[q('tick')]||0)>=tk.target?0:tk.target}else{l[q('tick')]=l[q('tick')]>0?0:1};if(doneToday(allTasks().find(t=>t.id===q('tick')))){const ts=dueToday();if(ts.every(doneToday)){setTimeout(()=>{confetti();toast('خلصت كل مهامك! 🎉')},50)}}}
- else if(q('p')){const l=day(),id=q('p'),t=allTasks().find(x=>x.id===id),before=doneToday(t);l[id]=(l[id]||0)+1;if(!before&&doneToday(t)){const ts=dueToday();if(ts.every(doneToday))setTimeout(()=>{confetti();toast('خلصت كل مهامك! 🎉')},50);else if(t&&t.target)toast('🎯 خلصت '+t.title)}}
- else if(q('m')){const l=day();l[q('m')]=Math.max(0,(l[q('m')]||0)-1)}
+ else if(q('p')){const l=day(),id=q('p'),t=allTasks().find(x=>x.id===id),before=doneToday(t);if(t&&t.auto)return;l[id]=(l[id]||0)+1;if(!before&&doneToday(t)){const ts=dueToday();if(ts.every(doneToday))setTimeout(()=>{confetti();toast('خلصت كل مهامك! 🎉')},50);else if(t&&t.target)toast('🎯 خلصت '+t.title)}}
+ else if(q('m')){if(q('m')==='ch3')return;const l=day();l[q('m')]=Math.max(0,(l[q('m')]||0)-1)}
  else if(q('del')!==undefined){const t=allTasks().find(x=>x.id===q('del'));if(!await confirmD('حذف المهمة؟','"'+(t?t.title:'')+'" هتتحذف نهائيًا.'))return;S.sections.forEach(s=>s.tasks=s.tasks.filter(t=>t.id!==q('del')));0}
  else if(q('add')){const i=document.getElementById('newTask'),v=i.value.trim();if(!v)return;const s=S.sections.find(x=>x.id===q('add'));s.tasks.push({id:uid(),title:v,played:s.id==='games'})}
  else if(q('delsec')){if(!await confirmD('حذف القسم؟','القسم بكل مهامه هيتحذف.'))return;S.sections=S.sections.filter(s=>s.id!==q('delsec'));S.view='home'}
