@@ -252,3 +252,115 @@ body[data-theme=dark] .gstep.drag{background:#2b2757}body[data-theme=dark] .gbtn
  .cnext{padding:16px 20px}.csecs{gap:8px}.csec{padding:7px 12px;font-size:14px}
  .clist{gap:8px}.cl{padding:10px 12px;font-size:14px}.csechead{gap:14px}
 }
+
+/* ===== v4.2 ===== */
+/* الرئيسية: عمودين بعد شيل المزاج والملاحظة */
+.homew{grid-template-columns:1.1fr 1fr!important;grid-template-rows:auto auto auto 1fr!important}
+.homew .cards{grid-column:2/4}
+@media(min-width:901px){.homew .cards{grid-column:1/-1}}
+@media(max-width:900px){.homew .cards{grid-column:1/-1}}
+/* أيقونة مصدر المهمة */
+.src{flex:none;width:30px;height:30px;border-radius:10px;background:#f4f1ff;display:grid;place-items:center;font-size:15px}
+body[data-theme=dark] .src{background:#2b2757}
+/* مهام الكورس في الرئيسية */
+.ctask{border:2px solid #a29bfe;background:linear-gradient(120deg,#fff,#f4f1ff)}
+body[data-theme=dark] .ctask{background:#211e44}
+.ctask .t em{font-style:normal;opacity:.65;font-size:13px}
+.cdone{border:0;background:#00b894;color:#fff;border-radius:12px;padding:8px 14px;cursor:pointer;font-size:14px;white-space:nowrap}
+.cdone:hover{filter:brightness(1.08)}
+/* التركيز */
+.focwrap{display:flex!important;flex-direction:column;align-items:center;gap:18px;height:auto}
+.focwrap .focus{width:min(640px,100%);padding:26px 30px}
+.fmode{font-size:17px}
+.ftname{font-size:22px;font-weight:800;margin-top:6px;min-height:30px}
+.fdots{display:flex;gap:8px;justify-content:center;margin:6px 0 12px}
+.dot{width:12px;height:12px;border-radius:50%;background:#e0dbff;display:inline-block;transition:.2s}
+.dot.act{background:#fff;border:3px solid #6c5ce7;transform:scale(1.25)}
+.dot.done{background:#6c5ce7}
+.focus.brk .dot.act{border-color:#00b894}.focus.brk .dot.done{background:#00b894}
+.focus.brk .ring.big{background:conic-gradient(#00b894 calc(var(--p)*1%),#d8f5ec 0)}
+.focus.brk .ftime,.focus.brk .fmode{color:#00b894}
+body[data-theme=dark] .focus.brk .ring.big{background:conic-gradient(#2dd4bf calc(var(--p)*1%),#1d4a40 0)}
+.fpresets{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;margin:4px 0 10px;font-size:14px}
+.fpresets span{opacity:.6}
+.fpresets button{border:2px solid #a29bfe;background:#fff;color:#6c5ce7;border-radius:20px;padding:7px 16px;cursor:pointer;font-weight:700;font-size:14px}
+.fpresets button:hover{background:#6c5ce7;color:#fff}
+body[data-theme=dark] .fpresets button{background:#2b2757;color:#ece9ff}
+.fstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.fstats div{background:#f4f1ff;border-radius:16px;padding:10px 6px;display:flex;flex-direction:column;gap:2px}
+.fstats b{font-size:24px;color:#6c5ce7}
+.fstats span{font-size:12px;opacity:.65}
+body[data-theme=dark] .fstats div{background:#2b2757}
+.fhint{font-size:12px;opacity:.55;margin:12px 0 0}
+/* إعدادات التركيز الجديدة */
+.setbox{width:min(640px,100%);background:#fff;border-radius:22px;box-shadow:0 6px 20px #6c5ce714;overflow:hidden}
+.sethead{width:100%;border:0;background:none;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;font-size:17px;cursor:pointer;color:inherit}
+.sethead span{opacity:.5}
+.setbody{padding:4px 20px 20px;display:flex;flex-direction:column;gap:16px}
+.setgrp{display:flex;flex-direction:column;gap:10px}
+.setgrp>b{font-size:14px;opacity:.7}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.sf{display:flex;flex-direction:column;gap:6px;background:#f4f1ff;border-radius:14px;padding:10px 12px;font-size:13px}
+.sf input{border:2px solid #e0dbff;border-radius:10px;padding:8px;font-size:16px;text-align:center;background:#fff;color:inherit;width:100%!important}
+body[data-theme=dark] .sf{background:#2b2757}body[data-theme=dark] .sf input{background:#211e44;border-color:#3a3570}
+body[data-theme=dark] .setbox{background:#211e44;color:#ece9ff}
+.sw{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:15px}
+.sw input{display:none}
+.sw i{flex:none;width:46px;height:26px;border-radius:20px;background:#e0dbff;position:relative;transition:.2s}
+.sw i::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 2px 6px #0002}
+.sw input:checked+i{background:#00b894}
+.sw input:checked+i::after{transform:translateX(-20px)}
+[dir=ltr] .sw input:checked+i::after{transform:translateX(20px)}
+/* الصلوات */
+.pbox{background:#fff;border-radius:22px;padding:18px 20px;box-shadow:0 6px 20px #6c5ce714}
+body[data-theme=dark] .pbox{background:#211e44;color:#ece9ff}
+.pboxhead{display:flex;justify-content:space-between;align-items:center}
+.pboxhead h3{margin:0}
+.pbox .pbar{margin:12px 0 14px}
+.pbox .hint{margin:10px 0 0;text-align:center}
+.ppic{}
+.pic{font-size:22px}
+.ppill{background:#6c5ce7;color:#fff;border-radius:20px;padding:4px 14px;font-weight:800}
+.pcard.on .pic{filter:drop-shadow(0 2px 6px #00b89466)}
+/* الأذكار */
+.acard{flex-direction:column}
+.ahead{display:flex;gap:10px;align-items:center}
+.ahead b{flex:1}
+.aitem{border-top:1px solid #eee9ff;padding:6px 0}
+body[data-theme=dark] .aitem{border-color:#3a3570}
+.aitem summary{display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer;font-size:14px;list-style:none;padding:4px 2px}
+.aitem summary::-webkit-details-marker{display:none}
+.aitem summary::before{content:"▾";color:#6c5ce7;flex:none;transition:.15s}
+.aitem:not([open]) summary::before{transform:rotate(90deg)}
+.aitem summary span{flex:1}
+.aitem summary small{opacity:.55;white-space:nowrap}
+.quran{font-size:16px;line-height:2;background:#f9f7ff;border-radius:12px;padding:12px 14px;margin:8px 0 6px;white-space:pre-line}
+body[data-theme=dark] .quran{background:#2b2757}
+.asrc{opacity:.6;font-size:12px}
+/* مراجعة اليوم */
+.rvrow{display:flex;align-items:center;gap:10px;border-radius:14px;padding:10px 14px;margin-bottom:8px;font-size:15px}
+.rvrow.g{background:#e9fff4}.rvrow.r{background:#fff1e6}
+body[data-theme=dark] .rvrow.g{background:#173a30}body[data-theme=dark] .rvrow.r{background:#4a2f2a}
+.rvrow .t{flex:1}
+.rvrow small{opacity:.6}
+.rvrow .del{opacity:.6}
+/* الكورس */
+.cprog{display:flex;align-items:center;gap:14px}
+.cprog .pbar{flex:1;margin:0;height:14px}
+.pbar.big i{background:linear-gradient(90deg,#00b894,#6c5ce7)}
+.cprog span{font-size:13px;opacity:.65;white-space:nowrap}
+.cbody{display:grid;grid-template-columns:minmax(0,290px) minmax(0,1fr);gap:14px;align-items:start}
+.cside{background:#fff;border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:4px;max-height:60vh;overflow-y:auto;scrollbar-width:thin}
+body[data-theme=dark] .cside{background:#211e44}
+.csidehead{padding:4px 8px 8px;font-size:14px;opacity:.7}
+.csec2{display:grid;grid-template-columns:26px 1fr auto;gap:8px;align-items:center;border:0;background:none;border-radius:10px;padding:7px 8px;cursor:pointer;color:inherit;font-size:13px;text-align:right}
+.csec2:hover{background:#f4f1ff}
+body[data-theme=dark] .csec2:hover{background:#2b2757}
+.csec2.on{background:#6c5ce7;color:#fff}
+.csec2 .csn{width:24px;height:24px;border-radius:8px;background:#f4f1ff;color:#6c5ce7;display:grid;place-items:center;font-weight:800;font-size:12px}
+.csec2.on .csn{background:#ffffff33;color:#fff}
+.csec2.dn .csn{background:#e9fff4;color:#00b894}
+.csec2 .cst{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.csec2 small{opacity:.65;font-size:11px;white-space:nowrap}
+.cmain{min-width:0}
+@media(max-width:900px){.cbody{grid-template-columns:1fr}.cside{max-height:none}}
