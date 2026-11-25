@@ -1,4 +1,4 @@
-/* يومي v4.6 */
+/* يومي v4.7 */
 const KEY='yawmi-v1';
 const dk=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const nowD=()=>new Date(Date.now()-((typeof S!=='undefined'&&S&&S.dayStart)||0)*36e5);
@@ -375,8 +375,8 @@ function chView(){const dn=Object.keys(S.ch.done).length,pc=Math.round(dn/CHALLE
  <h4>📚 كل التحديات</h4><div class="chfl">${opts}</div>
  <div class="chlist">${idxs.slice(pg*CHPP,pg*CHPP+CHPP).map(i=>chCard(CHALLENGES[i],i,false)).join('')||'<p class="hint">مفيش تحديات هنا.</p>'}</div>${pager(idxs.length,pg,'data-chpg')}</div>`}
 /* ---------- v4.4: إنجليزي ---------- */
-const enDailyW=()=>{const d=Math.floor((new Date(today()+'T00:00:00')-new Date('2026-11-25T00:00:00'))/864e5);return [EN_WORDS[((d%EN_WORDS.length)+EN_WORDS.length)%EN_WORDS.length],EN_PHRASES[((d%EN_PHRASES.length)+EN_PHRASES.length)%EN_PHRASES.length]]};
-function enWordRow(w,i){const kn=!!S.en.w[i];return `<div class="enw ${kn?'on':''}" data-enflip="w${i}"><div class="enf ${S.en.flip==='w'+i?'fl':''}"><span class="enword" dir="ltr">${esc(w[0])}</span><span class="enmean">${kn?esc(w[1]):''}</span></div><div class="enex" dir="ltr">${esc(w[2])}</div><div class="enbtns"><button data-enkn="${i}">${kn?'✓ عارفها':'علّمها معروفة'}</button></div></div>`}
+const enDailyW=()=>{const d=Math.floor((new Date(today()+'T00:00:00')-new Date('2026-11-25T00:00:00'))/864e5);const pick=(L,K)=>{const n=L.length,b=((d%n)+n)%n;for(let k=0;k<n;k++){const i=(b+k)%n;if(!K[i])return L[i]}return L[b]};return [pick(EN_WORDS,S.en.w),pick(EN_PHRASES,S.en.ph)]};
+function enWordRow(w,i){const kn=!!S.en.w[i];return `<div class="enw ${kn?'on':''}" data-enflip="w${i}"><div class="enf ${S.en.flip==='w'+i?'fl':''}"><span class="enword" dir="ltr">${esc(w[0])}</span><span class="enmean">${kn?esc(w[1]):''}</span></div><div class="enex" dir="ltr">${esc(w[2])}</div><div class="enexa">${esc(EN_AR[EN_WORDS.indexOf(w)]||'')}</div><div class="enbtns"><button data-enkn="${i}">${kn?'✓ عارفها':'علّمها معروفة'}</button></div></div>`}
 function enPage(){const kw=Object.keys(S.en.w).length,kp=Object.keys(S.en.ph).length,pw=Math.round(kw/EN_WORDS.length*100),pp=Math.round(kp/EN_PHRASES.length*100);
  return `<div class="enhero"><div><h2>🇬🇧 إنجليزي الشغل</h2><p>كلمة وجملة كل يوم، وراجع اللي عرفته. هدفك تتكلم مع العملاء بثقة.</p></div><div class="enstats"><div><b>${kw}/${EN_WORDS.length}</b><span>كلمة</span><i style="--w:${pw}%"></i></div><div><b>${kp}/${EN_PHRASES.length}</b><span>جملة</span><i style="--w:${pp}%"></i></div></div></div>${enView()}`}
 function enView(){const [dw,dp]=enDailyW(),dwi=EN_WORDS.indexOf(dw),dpi=EN_PHRASES.indexOf(dp);
@@ -385,12 +385,11 @@ function enView(){const [dw,dp]=enDailyW(),dwi=EN_WORDS.indexOf(dw),dpi=EN_PHRAS
  const tip=EN_TIPS[nowD().getDate()%EN_TIPS.length];
  return `<div class="cmain enwrap enpage">
  <div class="enday">
-  <div class="encard"><h4>📖 كلمة النهارده</h4><div class="enbig" dir="ltr">${esc(dw[0])}</div><div class="enm">${esc(dw[1])}</div><div class="enex" dir="ltr">${esc(dw[2])}</div><button data-enkn="${dwi}">${S.en.w[dwi]?'✓ عارفها':'علّمها معروفة'}</button></div>
+  <div class="encard"><h4>📖 كلمة النهارده</h4><div class="enbig" dir="ltr">${esc(dw[0])}</div><div class="enm">${esc(dw[1])}</div><div class="enex" dir="ltr">${esc(dw[2])}</div><div class="enexa">${esc(EN_AR[dwi]||'')}</div><button data-enkn="${dwi}">${S.en.w[dwi]?'✓ عارفها':'علّمها معروفة'}</button></div>
   <div class="encard"><h4>💬 جملة النهارده</h4><div class="enph" dir="ltr">${esc(dp[0])}</div><div class="enm">${esc(dp[1])}</div><p class="hint">اقراها بصوت عالي 3 مرات</p><button data-enpk="${dpi}">${S.en.ph[dpi]?'✓ اتقنتها':'علّمها متقنة'}</button></div>
   <div class="encard entip"><h4>💡 نصيحة</h4><p>${tip}</p><div class="enst"><b>${kw}</b> كلمة · <b>${kp}</b> جملة اتقنتهم</div></div>
  </div>
- <h4>🃏 كروت المراجعة (${kw} كلمة معروفة)</h4>
- <div class="enrev">${kw?Object.keys(S.en.w).map(i=>{const w=EN_WORDS[i];return `<div class="enc ${S.en.flip==='r'+i?'fl':''}" data-enflip="r${i}"><span class="ena">${S.en.flip==='r'+i?esc(w[1]):esc(w[0])}</span><small>${S.en.flip==='r'+i?'':'دوس للمعنى'}</small></div>`}).join(''):'<p class="hint">علّم كلمات معروفة من بنك الكلمات عشان تتراجع هنا.</p>'}</div>
+ <div class="enrv ${S.en.rev?'open':''}"><button class="enrvh" data-enrev="1"><span>🃏 كروت المراجعة</span><b>${kw}</b><i>${S.en.rev?'▲':'▼'}</i></button>${S.en.rev?`<div class="enrev">${kw?Object.keys(S.en.w).map(i=>{const w=EN_WORDS[i],f=S.en.flip==='r'+i;return `<div class="enc ${f?'fl':''}" data-enflip="r${i}"><span class="ena" dir="ltr">${esc(w[0])}</span><span class="enb">${f?esc(w[1]):'دوس للمعنى'}</span></div>`}).join(''):'<p class="hint">علّم كلمات معروفة من بنك الكلمات عشان تتراجع هنا.</p>'}</div>`:''}</div>
  <h4>💼 جمل للعملاء (${kp}/${EN_PHRASES.length})</h4>
  <div class="enphs">${EN_PHRASES.map((p,i)=>[p,i]).slice(ppg*CHPP,ppg*CHPP+CHPP).map(([p,i])=>`<div class="enp ${S.en.ph[i]?'on':''}"><span dir="ltr">${esc(p[0])}</span><small>${esc(p[1])}</small><button data-enpk="${i}">${S.en.ph[i]?'✓':'اتقنتها'}</button></div>`).join('')}</div>${pager(EN_PHRASES.length,ppg,'data-enpp')}
  <h4>📚 بنك الكلمات (${kw}/${EN_WORDS.length})</h4>
@@ -431,8 +430,9 @@ document.addEventListener('click',async e=>{const b=e.target.closest('button');i
  else if(q('chs')){S.ch.show=S.ch.show===+q('chs')?undefined:+q('chs')}
  else if(q('chok')){const i=+q('chok');S.ch.done[i]=1;chTrack(i,1);if(i===S.ch.idx%CHALLENGES.length)S.ch.idx++;confetti();toast('⚡ تحدي جديد اتحل!')}
  else if(q('chx')){delete S.ch.done[+q('chx')];chTrack(+q('chx'),0)}
- else if(q('enkn')){const i=+q('enkn');S.en.w[i]?delete S.en.w[i]:S.en.w[i]=1}
- else if(q('enpk')){const i=+q('enpk');S.en.ph[i]?delete S.en.ph[i]:S.en.ph[i]=1}
+ else if(q('enkn')){const i=+q('enkn');if(S.en.w[i])delete S.en.w[i];else{S.en.w[i]=1;toast('✅ كلمة جديدة اتضافت لمعروفاتك')}}
+ else if(q('enpk')){const i=+q('enpk');if(S.en.ph[i])delete S.en.ph[i];else{S.en.ph[i]=1;toast('✅ جملة جديدة اتضافت لمتقناتك')}}
+ else if(q('enrev')){S.en.rev=!S.en.rev}
  else if(q('enflip')){S.en.flip=S.en.flip===q('enflip')?undefined:q('enflip')}
  else if(b.hasAttribute('data-cpos2')){const nx2=cNext(),na2=COURSE.findIndex((x,i)=>!S.course.a[i]);const r=await ask({title:'مكانك في الكورس',fields:[{id:'v',label:'رقم الفيديو الجاي (1-'+(cLessons().length+1)+')',value:nx2?nx2[0]:cLessons().length+1},{id:'a',label:'رقم التكليف الجاي (1-'+(COURSE.length+1)+')',value:na2<0?COURSE.length+1:na2+1}],ok:'حفظ'});if(!r)return;const n=Math.max(1,Math.min(cLessons().length+1,+r.v||1)),k=Math.max(1,Math.min(COURSE.length+1,+r.a||1));S.course.v={};for(let i=1;i<n;i++)S.course.v[i]=1;S.course.a={};for(let i=0;i<k-1;i++)S.course.a[i]=1;CS.sec=-1;toast('💻 اتحفظ مكانك في الكورس')}
  else if(b.hasAttribute('data-ftest')){playSeq(S.fa.vol,S.fa.sound);return}
